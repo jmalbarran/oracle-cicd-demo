@@ -1,0 +1,91 @@
+SET ECHO ON
+SET SERVEROUTPUT ON
+DEFINE DEV_USER='&1'
+DEFINE DEV_PASSWORD='&2'
+DEFINE PRE_USER='&3'
+DEFINE PRE_PASSWORD='&4'
+-- Exit on error
+WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
+
+-- Drop and recreate users
+CALL DBMS_OUTPUT.PUT_LINE('Cleaning up previous demo users');
+@kill_session.sql &DEV_USER.
+@drop_user.sql &DEV_USER.
+@kill_session.sql &PRE_USER.
+@drop_user.sql &PRE_USER.
+
+-- Create base edition
+@create_base_edition.sql
+
+-- Create users/schemas
+CALL DBMS_OUTPUT.PUT_LINE('Creating users');
+CREATE USER &DEV_USER IDENTIFIED BY &DEV_PASSWORD;
+GRANT CREATE SESSION TO &DEV_USER;
+GRANT DWROLE TO &DEV_USER;
+GRANT UNLIMITED TABLESPACE TO &DEV_USER;
+ALTER USER &DEV_USER ENABLE EDITIONS;
+GRANT CREATE ANY EDITION, DROP ANY EDITION TO &DEV_USER;    
+GRANT SELECT ON DBA_EDITIONS TO &DEV_USER; 
+GRANT ALTER DATABASE TO &DEV_USER;
+
+CREATE USER &PRE_USER IDENTIFIED BY &PRE_PASSWORD;
+GRANT CREATE SESSION TO &PRE_USER;
+GRANT DWROLE TO &PRE_USER;
+GRANT UNLIMITED TABLESPACE TO &PRE_USER;
+ALTER USER &PRE_USER ENABLE EDITIONS;
+GRANT CREATE ANY EDITION, DROP ANY EDITION TO &PRE_USER;    
+GRANT SELECT ON DBA_EDITIONS TO &PRE_USER; 
+GRANT ALTER DATABASE TO &PRE_USER;
+
+-- Create technical functions
+-- Internal function
+create or replace FUNCTION LASTEDITION RETURN DBA_EDITIONS.EDITION_NAME%TYPE AS 
+    last_edition DBA_EDITIONS.EDITION_NAME%TYPE := 'ORA$BASE';
+    next_edition DBA_EDITIONS.EDITION_NAME%TYPE := 'ORA$BASE';
+BEGIN
+    WHILE TRUE
+    LOOP
+        BEGIN
+            SELECT EDITION_NAME 
+            INTO next_edition 
+            FROM DBA_EDITIONS 
+            WHERE PARENT_EDITION_NAME=next_edition;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                EXIT;
+            WHEN OTHERS THEN
+                RAISE;
+        END;
+        last_edition:=next_edition;
+    END LOOP;
+
+  RETURN last_edition;
+END LASTEDITION;
+/
+
+GRANT EXECUTE ON LASTEDITION TO PUBLIC;
+
+CREATE OR REPLACE PUBLIC SYNONYM LASTEDITION  FOR LASTEDITION;
+
+-- Delete previous demos editions
+-- TODO: Users with granted privileges on edition
+-- SELECT GRANTEE, PRIVILEGE
+-- FROM DBA_TAB_PRIVS
+-- WHERE TABLE_NAME = 'EDITION_MAIN'
+DECLARE
+    v_lastedition DBA_EDITIONS.EDITION_NAME%TYPE;
+BEGIN
+    v_lastedition:=LASTEDITION();
+    WHILE v_lastedition!='EDITION_MAIN'
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('Dropping edition ' || v_lastedition);    
+    	EXECUTE IMMEDIATE 'DROP EDITION ' || v_lastedition || ' CASCADE'; 
+        v_lastedition:=LASTEDITION(); 
+    END LOOP;
+END;
+/ 
+
+
+
+
+quit

@@ -1,0 +1,268 @@
+{
+	"info": {
+		"_postman_id": "42176240-64e2-4375-8902-9a344fe0a265",
+		"name": "Springboot Sample App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Actuator",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/actuator",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"actuator"
+					]
+				},
+				"description": "Check if actuator is deployed and available"
+			},
+			"response": []
+		},
+		{
+			"name": "Actuator Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/actuator/health",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/product",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"product"
+					]
+				},
+				"description": "Check if actuator is deployed and available"
+			},
+			"response": []
+		},
+		{
+			"name": "Get product by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/product/:id",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"product",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create product",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"First product\"\n}"
+				},
+				"url": {
+					"raw": "{{origin}}/product",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update product",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 21,\n    \"name\": \"Active product\",\n    \"price\": 0,\n    \"stock\": null,\n    \"isactive\": 1\n}"
+				},
+				"url": {
+					"raw": "{{origin}}/product/21",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"product",
+						"21"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete product by id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/product/:id",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"product",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get product count",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/productCount",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"productCount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get greeting",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/productCount",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"productCount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current edition",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/edition/current",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"edition",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get last edition",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{origin}}/edition/last",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"edition",
+						"last"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set current edition",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"edition\": \"EDITION_MAIN\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{origin}}/edition",
+					"host": [
+						"{{origin}}"
+					],
+					"path": [
+						"edition"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

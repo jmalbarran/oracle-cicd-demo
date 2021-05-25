@@ -1,0 +1,14 @@
+DECLARE
+    CURSOR C_STM 
+    IS
+        SELECT 'ALTER SYSTEM KILL SESSION ''' || SID || ',' || SERIAL# ||''' IMMEDIATE' AS STM
+        FROM V$SESSION 
+        WHERE USERNAME = UPPER('&1');
+BEGIN
+    FOR R_STM IN C_STM
+    LOOP   
+        DBMS_OUTPUT.PUT_LINE('Killing session for user &1.: '||R_STM.STM);
+        EXECUTE IMMEDIATE R_STM.STM;
+    END LOOP;
+END;
+/

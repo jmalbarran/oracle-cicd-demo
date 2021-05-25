@@ -1,0 +1,16 @@
+app.edition: EDITION_MAIN
+server.port: 7000
+
+
+spring.datasource:
+  #driver-class-name: oracle.jdbc.driver.OracleDriver
+  driver-class-name: oracle.jdbc.pool.OracleDataSource
+  url: "${DB_URL}"
+  username: "${DB_USER}"
+  password: "${DB_PASSWORD}"
+
+spring.jpa:
+  open-in-view: false
+  show-sql: true
+  database: oracle
+

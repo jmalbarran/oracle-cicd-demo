@@ -1,0 +1,14 @@
+DECLARE
+    CURSOR C_STM 
+    IS
+        SELECT 'DROP USER ' || USERNAME ||' CASCADE' AS STM
+        FROM DBA_USERS
+        WHERE USERNAME = UPPER('&1');
+BEGIN
+    FOR R_STM IN C_STM
+    LOOP   
+        DBMS_OUTPUT.PUT_LINE('Dropping user &1.');
+        EXECUTE IMMEDIATE R_STM.STM;
+    END LOOP;
+END;
+/
