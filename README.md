@@ -1,3 +1,14 @@
+# Overview
+This demo show how to implement a continous delivery pipeline supporting Oracle database changes (DDL) and database business logic (PL/SQL).
+
+# Requirements
+- A database connection where you are admin/sysdba (can create/drop users, and alter database with grant)
+- Internet connection (required for gradle to be able to connect to maven central and download libs)
+- JDK 1.8
+- gradle
+- SQLcl version 20.4. This is the version comming inside SQL Developer version 20.4. NOTE: Version 21 has a bug avoiding to complete the demo
+- git
+
 # Setting up the demo environment
 ## Download the sample
 - Download ZIP repository, or
@@ -66,7 +77,7 @@
 - As operation, deploy the application for Canary testing. For this, execute the script
 
   ```
-  demo/scripts/pre-deploy-version-in-test v1
+  demo/scripts/pre-deploy-version-in-test.sh v1
   ```
 
 - Optional: Check the deployment in pre environment
@@ -83,10 +94,43 @@
 
 ## Do Canary testing
 - Ensure that dev application is stopped. Currently the both enviroments share the port 7000, so cannot coexist in the same PC
-- Start your favourite terminal and move to preproduction environment `cd environments/dev`. Start the SpringBoot application with `./app-run.sh`
+- Start your favourite terminal and move to preproduction environment `cd environments/pre`. Start the SpringBoot application with `./app-run.sh`
 - In Postman, call the `Greeting` function. You will set the previous (v0) message `"greeting": "Hello, world!!!"` because by default all users are in B (previous) scenary
 - Using Postman, use the `Procedure: Set Current Edition` to change your scenario to `EDITION_V1``
 - Repeat the previous call to `Greeting` and you will get the V1 message `"greeting": "Hello, A BRAVE NEW world!!!"`
 - NOTE: In real world scenarios, we can use several alternatives. In microservices we can create differente database services (pointing to the different editions) and have a pool of containers, some pointing to V0 services and the canary testers pointing to V1.
+
+## Deploy for all users
+- As operator, execute the deployment script. For this, execute the script
+
+  ```
+  demo/scripts/pre-deploy-version-for-all.sh v1
+  ```
+- In the current version, you have to restart the front-end application to see the changes. Stop the running application in pre environment, and re-run  with `./app-run.sh`
+- Re-execute the same test done in Canary testing
+  - Repeat the previous call to `Greeting` and you will get the V1 message `"greeting": "Hello, A BRAVE NEW world!!!"`
+  - If you call the service `Get current edition`, you will see `EDITION_V1` with no need to change
+- Alternatives: We can create different services using different editions with DBMS_SERVICE.CREATE_SERVICE. See [Oracle Database Administrator's Guide](https://docs.oracle.com/pls/topic/lookup?ctx=en/database/oracle/oracle-database/21/adfns&id=ADMIN12956)
+
+## Rollback
+- In case of error, you can rollback the last version deployed. For this, 
+- Disconnect all users connected to the last versions. TODO: Implement automatic disconnection of these users
+- Execute the script
+  ```
+  demo/scripts/pre-rollback-version.sh v1
+  ```
+- If you require to rollback several version, you have to execute the script n-times
+- IMPORTANT CONSIDERATIONS:
+  - The rollback remove the structure changes (DDL) and the code changes (PL/SQL)
+  - Also, removes the EDITION from the database
+  - But, DO NOT REMOVE the tag from GIT. So, we suggest that the next version created in dev environment DO NOT REUSE the tag, to avoid possible collateral efects. NOTE: It's an standard recomendation do not remove commits or tags in git progression. If required, you have to change the scripts to do a rebase/cherry-picking in case of rollback and apply it to all environments. Again, we do not recommend
+
+# Links
+- [Blog entry: Edition-Based Redefinition – A solution for zero-downtime application upgrades](https://blogs.oracle.com/maa/edition-based-redefinition-a-solution-for-zero-downtime-application-upgrades)
+- [Presentation: Edition-Based Redefinition](https://www.oracle.com/a/tech/docs/ebr-deck-redwood-2020.pdf)
+- [Doc: Edition-Based Redefinition Technical Deep Dive](https://www.oracle.com/a/tech/docs/ebr-technical-deep-dive-overview.pdf)
+- [Database Development Guide 21c: Using Edition-Based Redefinition](https://docs.oracle.com/en/database/oracle/oracle-database/21/adfns/editions.html#GUID-58DE05A0-5DEF-4791-8FA8-F04D11964906)
+- [SQLcl User's guide](https://docs.oracle.com/en/database/oracle/sql-developer-command-line/20.4/sqcug/index.html)
+
 
 
