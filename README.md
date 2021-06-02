@@ -6,7 +6,7 @@ This demo show how to implement a continuous delivery pipeline supporting Oracle
 - Internet connection (required for gradle to be able to connect to maven central and download libs)
 - JDK 1.8
 - gradle
-- SQLcl version 20.4. This is the version comming inside SQL Developer version 20.4. NOTE: Version 21 has a bug avoiding to complete the demo
+- SQLcl version 20.4. This is the version comming inside SQL Developer version 20.4. NOTE: Version 21 has a bug avoiding to complete the demo (PATH variable needs to be updated to include sqlcl bin directory)
 - git
 
 # Setting up the demo environment
