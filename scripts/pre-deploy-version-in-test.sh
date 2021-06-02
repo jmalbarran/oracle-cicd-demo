@@ -17,8 +17,7 @@ if [ -z "$1" ]
 		echo "Use: $0 versionlabel"
 		exit 1
 	else
-		VERSION="$1"
-		VERSION=${VERSION^^}
+		VERSION=$(echo "$1" | tr [':lower:'] [':upper:'])
 fi
 
 CURRENT_ENV=${PWD##*/}
