@@ -30,7 +30,7 @@ fi
 source setenv.sh
 
 # Generate Liquibase controller and schema
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp<<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}<<-EOF
 set echo on
 CD database/liquibase
 LB gencontrolfile

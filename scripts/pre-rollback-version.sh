@@ -29,7 +29,7 @@ echo "=============================================="
 echo "Rolling back last version on $(date)"
 
 # Get last edition
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp  <<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}  <<-EOF
 SET PAGES 0
 SET FEEDBACK OFF
 SET TERM OFF
@@ -49,7 +49,7 @@ LAST_EDITION=$(cat $TEMPFILE && rm $TEMPFILE)
 LAST_VERSION=$(echo $LAST_EDITION|sed 's/EDITION_//g')
 
 # Get previous edition
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp <<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE} <<-EOF
 SET PAGES 0
 SET FEEDBACK OFF
 SET TERM OFF
@@ -81,7 +81,7 @@ echo "Returning to version ${PREVIOUS_VERSION}"
 # Rolling back: EDITION, LIQUIBASE (SCHEMA) AND GIT
 ## Return to previous edition and drop last edition
 echo "Replace current edition with $PREVIOUS_EDITION"  
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp  <<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}  <<-EOF
 SET ECHO ON
 ALTER DATABASE DEFAULT EDITION = $PREVIOUS_EDITION;
 ALTER SESSION SET EDITION = $PREVIOUS_EDITION;
@@ -90,7 +90,7 @@ QUIT
 EOF
 
 ## Get last tag count
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp <<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE} <<-EOF
 SET PAGES 0
 SET FEEDBACK OFF
 SET TERM OFF
@@ -114,7 +114,7 @@ if [ ${COUNTLASTTAG} -eq 0 ]
 	else
 		## Rolling back schema based in Liquibase controller
 		echo "Rolling back $COUNTLASTTAG updates from version $LAST_VERSION"
-		sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp <<-EOF
+		sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE} <<-EOF
 		set echo on
 		cd database/liquibase
 		lb rollback -changelog controller.xml -log -count $COUNTLASTTAG

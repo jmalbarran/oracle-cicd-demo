@@ -35,7 +35,7 @@ echo "=============================================="
 echo "Deploy version in test on $(date)"  
 
 # Get last edition
-sql -S ${DB_USER}/${DB_PASSWORD}@lbtest_tp >>pre-rollback-version.log <<-EOF
+sql -S ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE} >>pre-rollback-version.log <<-EOF
 -- Exit on error
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
 SET PAGES 0
@@ -67,7 +67,7 @@ git push -f --tags
 
 # Create EDITION
 echo "Creating edition ${NEW_EDITION}"
-sql -S ${DB_USER}/${DB_PASSWORD}@lbtest_tp  <<-EOF
+sql -S ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}  <<-EOF
 -- Exit on error
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
 SET PAGES 0
@@ -86,7 +86,7 @@ EOF
 
 # Update schema based in Liquibase controller
 echo "Updating schema (DDL and code)"
-sql -S ${DB_USER}/${DB_PASSWORD}@lbtest_tp  <<-EOF
+sql -S ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}  <<-EOF
 -- Exit on error
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
 SET PAGES 0
