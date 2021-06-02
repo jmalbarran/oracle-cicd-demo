@@ -27,7 +27,7 @@ echo "=============================================="
 echo "Deploy last version for everybody"  
 
 # Get last edition
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp >>pre-rollback-version.log <<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE} >>pre-rollback-version.log <<-EOF
 SET PAGES 0
 SET FEEDBACK OFF
 SET TERM OFF
@@ -48,7 +48,7 @@ LAST_VERSION=$(echo $LAST_EDITION|sed 's/EDITION_//g')
 echo "Deploy last version ${LAST_VERSION} for everybody using edition ${LAST_EDITION}"  
 
 # Update schema based in Liquibase controller
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp <<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE} <<-EOF
 SET ECHO ON
 ALTER DATABASE DEFAULT EDITION = $LAST_EDITION;
 QUIT

@@ -185,12 +185,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{origin}}/productCount",
+					"raw": "{{origin}}/greeting",
 					"host": [
 						"{{origin}}"
 					],
 					"path": [
-						"productCount"
+						"greeting"
 					]
 				}
 			},

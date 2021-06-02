@@ -39,16 +39,13 @@ cd "${CURDIR}"
 cp -r ../v0/setenv.sh ../environments/pre
 chmod +x ../environments/pre/setenv.sh
 cd ../environments/pre
-echo "TNS_ADMIN=${TNS_ADMIN}" >.env
-echo "DB_USER=${DEV_USER}" >>.env
-echo "DB_PASSWORD=${DEV_PASSWORD}" >>.env
-echo "DB_URL=${DB_URL}" >>.env
 
 ## Setpre  environment variables 
 echo "TNS_ADMIN=${TNS_ADMIN}" >.env
 echo "DB_USER=${PRE_USER}" >>.env
 echo "DB_PASSWORD=${PRE_PASSWORD}" >>.env
 echo "DB_URL=${DB_URL}" >>.env
+echo "TNS_SERVICE=${TNS_SERVICE}" >>.env
 
 ## Set dev environment cloning from origin
 cd ..
@@ -62,6 +59,7 @@ echo "TNS_ADMIN=${TNS_ADMIN}" >.env
 echo "DB_USER=${DEV_USER}" >>.env
 echo "DB_PASSWORD=${DEV_PASSWORD}" >>.env
 echo "DB_URL=${DB_URL}" >>.env
+echo "TNS_SERVICE=${TNS_SERVICE}" >>.env
 
 
 # Deploy version v0 of application to dev environment

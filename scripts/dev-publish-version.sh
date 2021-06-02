@@ -15,8 +15,7 @@ if [ -z "$1" ]
 		echo "Use: $0 versionlabel"
 		exit 1
 	else
-		VERSION="$1"
-		VERSION=${VERSION^^}
+		VERSION=$(echo "$1" | tr [':lower:'] [':upper:'])
 fi
 
 CURRENT_ENV=${PWD##*/}
@@ -31,7 +30,7 @@ fi
 source setenv.sh
 
 # Generate Liquibase controller and schema
-sql ${DB_USER}/${DB_PASSWORD}@lbtest_tp<<-EOF
+sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}<<-EOF
 set echo on
 CD database/liquibase
 LB gencontrolfile
