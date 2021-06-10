@@ -1,0 +1,14 @@
+ALTER TABLE PRODUCT 
+    ADD DETAIL VARCHAR2(32767 CHAR);
+ALTER TABLE PRODUCT
+    ADD CONSTRAINT CHECK_DETAIL_IS_JSON CHECK (DETAIL IS JSON)ENABLE;
+
+CREATE SEARCH INDEX JSON_IDX_Detail ON Product(Detail) FOR JSON;
+
+INSERT 
+    INTO PRODUCT(ID,NAME,ISACTIVE,DETAIL)
+    VALUES(PRODUCT_SEQ.NEXTVAL,'Product with JSON details',1,'{"Manufacturer" : "Sony"}');
+
+SELECT id, name, isactive, p.detail, p.detail.Manufacturer 
+FROM Product p
+WHERE JSON_TEXTCONTAINS(detail,'$.Manufacturer','Sony');   
