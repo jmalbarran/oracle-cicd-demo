@@ -32,7 +32,7 @@ TEMPFILE=$(mktemp)
 
 # Start
 echo "==============================================" 
-echo "Deploy version in test on $(date)"  
+echo "Deploy version ${VERSION} in test on $(date)"  
 
 # Get last edition
 sql -S ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE} >>pre-rollback-version.log <<-EOF
@@ -56,9 +56,10 @@ EOF
 LAST_EDITION=$(cat $TEMPFILE && rm $TEMPFILE)
 NEW_EDITION="EDITION_${VERSION}"
 
-echo "The version will be deployed in edition ${NEW_EDITION} AS CHILD OF ${LAST_EDITION}"
+echo "The version ${VERSION} will be deployed in edition ${NEW_EDITION} AS CHILD OF ${LAST_EDITION}"
 
 # Move GIT repository to the selected version
+echo "Fetching and Merging version ${VERSION} from GIT branch origin/dev"
 git fetch --all
 git merge -q origin/dev
 git reset --hard ${VERSION}
@@ -66,7 +67,7 @@ git push -f
 git push -f --tags
 
 # Create EDITION
-echo "Creating edition ${NEW_EDITION}"
+echo "Creating edition ${NEW_EDITION} in ${TNS_SERVICE} database"
 sql -S ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}  <<-EOF
 -- Exit on error
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
@@ -85,7 +86,7 @@ EOF
 
 
 # Update schema based in Liquibase controller
-echo "Updating schema (DDL and code)"
+echo "Updating ${DB_USER} schema (DDL and code) in ${TNS_SERVICE} database"
 sql -S ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}  <<-EOF
 -- Exit on error
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
@@ -105,5 +106,6 @@ UPDATE DATABASECHANGELOG SET TAG='${VERSION}' WHERE TAG IS NULL;
 QUIT
 EOF
 
+echo "Deploy version in test ended with no errors"
 
 

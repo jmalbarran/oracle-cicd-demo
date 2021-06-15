@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-set -ex
-
+set -e
 
 ## Change current directory to current script. Rest of actions relative to current script
 CURDIR=$(cd $(dirname "$0"); pwd -P)
@@ -30,8 +29,21 @@ fi
 source setenv.sh
 
 # Generate Liquibase controller and schema
-sql ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}<<-EOF
-set echo on
+echo "Generating schema for liquibase"
+sql -S ${DB_USER}/${DB_PASSWORD}@${TNS_SERVICE}<<-EOF
+-- No output
+SET PAGES 0
+SET FEEDBACK OFF
+SET TERM OFF
+SET TIMING OFF
+SET PAUSE OFF
+SET TRIMSPOOL ON
+SET HEAD OFF
+SET FEED OFF
+SET ECHO OFF
+-- Exit on error
+WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
+-- Generate liquibase schema
 CD database/liquibase
 LB gencontrolfile
 LB genschema
@@ -39,6 +51,7 @@ quit
 EOF
 
 # Commit and tag version
+echo "Commit, Tagging and Publishing version ${VERSION} in GIT repository"
 # TODO: Remove add all
 git add -A
 # Add newly added liquibase

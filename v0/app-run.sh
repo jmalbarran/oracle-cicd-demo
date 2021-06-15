@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-
-set -ex
-
+set -e
 source setenv.sh
 gradle :application:bootRun
 
