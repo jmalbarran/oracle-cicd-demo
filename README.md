@@ -4,7 +4,7 @@ This demo show how to implement a continuous delivery pipeline supporting Oracle
 # Requirements
 - A database connection where you are admin/sysdba (can create/drop users, and alter database with grant)
 - Internet connection (required for gradle to be able to connect to maven central and download libs)
-- JDK 1.8
+- JDK 1.8+ (current demo microservices are configured to compile with OpenJDK 11)
 - gradle
 - SQLcl version 20.4. This is the version comming inside SQL Developer version 20.4. NOTE: Version 21 has a bug avoiding to complete the demo (PATH variable needs to be updated to include sqlcl bin directory)
 - git
@@ -50,7 +50,7 @@ This demo show how to implement a continuous delivery pipeline supporting Oracle
 - From Postman (or your favourite tool)
   - Check the application health using the `Actuator health` endpoint
   - Using the `Get All Products`, `Create Products`and `Get Product by id`feed some products to sample. Be aware that initially the product only have id and name (relevant for the JSON body in POST/Create and PUT/Update)
-## Create and deploy the V1 for Canary testing
+## Create and deploy the V1 for Canary testing (PL/SQL)
 - Modify the simple test function using the SQL Developer. E.g. changing directly the greeting text in function `Greeting`
   ```
   create or replace FUNCTION Greeting RETURN VARCHAR2 AS
@@ -104,7 +104,7 @@ This demo show how to implement a continuous delivery pipeline supporting Oracle
 - As operator, execute the deployment script. For this, execute the script
 
   ```
-  demo/scripts/pre-deploy-version-for-all.sh v1
+  demo/scripts/pre-deploy-version-for-all.sh
   ```
 - In the current version, you have to restart the front-end application to see the changes. Stop the running application in pre environment, and re-run  with `./app-run.sh`
 - Re-execute the same test done in Canary testing
@@ -112,12 +112,74 @@ This demo show how to implement a continuous delivery pipeline supporting Oracle
   - If you call the service `Get current edition`, you will see `EDITION_V1` with no need to change
 - Alternatives: We can create different services using different editions with DBMS_SERVICE.CREATE_SERVICE. See [Oracle Database Administrator's Guide](https://docs.oracle.com/pls/topic/lookup?ctx=en/database/oracle/oracle-database/21/adfns&id=ADMIN12956)
 
+
+## Create and deploy V2 for all users (DDL)
+- Stop the running application in pre environment, and restart the application in dev
+  ```
+  cd ./demo/environments/dev
+  ./app-run.sh
+  ```
+- Modify the java code for adding a isactive numeric field
+  - Edit the file `./demo/environments/dev/application/src/main/java/com/example/application/persistence/ProductEntity.java`
+  - Add the isactive field
+    ```
+    private int isactive;
+    ```
+  - Add the getter and setter
+    ```
+    public void setIsactive(int isActive) {
+      this.isactive=isActive;
+    }
+
+    public int getIsactive() {
+      return this.isactive;
+    }
+    ```
+- In database DEV environment, modify the PRODUCT table to add ISACTIVE column
+  ```
+  ALTER TABLE "PRODUCT" ADD ("ISACTIVE" NUMBER(1,0) DEFAULT 1 NOT NULL ENABLE);
+  ```
+- In database DEV environment, modify the function ProductCount to consider new field
+  ```
+  CREATE OR REPLACE EDITIONABLE FUNCTION "PRODUCTCOUNT" RETURN NUMBER AS
+    l_count NUMBER;
+  BEGIN
+    SELECT COUNT(*) 
+    INTO l_count
+    FROM Product
+      WHERE ISACTIVE=1;
+
+    RETURN l_count;
+  END;
+  ```
+- Test the application
+  - Notice the new field in GetAllProductos or GetProduct
+  - Create a new product, adding "isactive": 0 to JSON
+  ```
+  {
+    "name": "My first inactive product",
+    "isactive": 0
+  }
+  ```
+  - Check the function ProductCount
+
+- Deploy the new version
+  - Stop application in dev environment
+  - Deploy
+    ```
+    demo/scripts/dev-publish-version.sh v2
+    demo/scripts/pre-deploy-version-in-test.sh v2
+    demo/scripts/pre-deploy-version-for-all.sh
+    ```
+  - Start application in pre environment and retest
+
+
 ## Rollback
 - In case of error, you can rollback the last version deployed. For this, 
-- Disconnect all users connected to the last versions. TODO: Implement automatic disconnection of these users
+- Disconnect all users connected to the last versions. **TODO**: Implement automatic disconnection of these users
 - Execute the script
   ```
-  demo/scripts/pre-rollback-version.sh v1
+  demo/scripts/pre-rollback-version.sh v2
   ```
 - If you require to rollback several version, you have to execute the script n-times
 - IMPORTANT CONSIDERATIONS:
