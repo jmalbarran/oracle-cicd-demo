@@ -188,11 +188,15 @@ This demo show how to implement a continuous delivery pipeline supporting Oracle
   - But, DO NOT REMOVE the tag from GIT. So, we suggest that the next version created in dev environment DO NOT REUSE the tag, to avoid possible collateral efects. NOTE: It's an standard recomendation do not remove commits or tags in git progression. If required, you have to change the scripts to do a rebase/cherry-picking in case of rollback and apply it to all environments. Again, we do not recommend
 
 # Links
+## Edition Based Redefinition
 - [Blog entry: Edition-Based Redefinition – A solution for zero-downtime application upgrades](https://blogs.oracle.com/maa/edition-based-redefinition-a-solution-for-zero-downtime-application-upgrades)
 - [Presentation: Edition-Based Redefinition](https://www.oracle.com/a/tech/docs/ebr-deck-redwood-2020.pdf)
 - [Doc: Edition-Based Redefinition Technical Deep Dive](https://www.oracle.com/a/tech/docs/ebr-technical-deep-dive-overview.pdf)
 - [Database Development Guide 21c: Using Edition-Based Redefinition](https://docs.oracle.com/en/database/oracle/oracle-database/21/adfns/editions.html#GUID-58DE05A0-5DEF-4791-8FA8-F04D11964906)
+## Liquibase
+- [Automating Oracle Database deployment with Liquibase (without SQLcl)](https://oracle-base.com/articles/misc/liquibase-automating-your-database-deployments)
+- [Using Liquibase with Oracle Autonomous Database](https://docs.liquibase.com/workflows/database-setup-tutorials/oracle-atp-db.html)
+- [Video: Using Liquibase with an Always Free Oracle Autonomous Database](https://youtu.be/bAa7QEYfwLk?t=361)
+## SQLcl
 - [SQLcl User's guide](https://docs.oracle.com/en/database/oracle/sql-developer-command-line/20.4/sqcug/index.html)
-
-
-
+- [Automating database deployments with SQLcl and Liquibase](https://oracle-base.com/articles/misc/sqlcl-automating-your-database-deployments-using-sqlcl-and-liquibase)
