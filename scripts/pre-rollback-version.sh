@@ -20,6 +20,9 @@ if [ "${CURRENT_ENV}" != "pre" ]
 fi
 
 
+# Disconnect previous sessions
+${CURDIR}/disconnect-sessions.sh ${DB_USER}
+
 # Temp file
 TEMPFILE=$(mktemp)
 

@@ -68,6 +68,9 @@ ALTER DATABASE DEFAULT EDITION = $LAST_EDITION;
 QUIT
 EOF
 
+# Disconnect sessions
+${CURDIR}/disconnect-sessions.sh ${DB_USER}
+
 # End
 echo "Deploy last version for everybody ended with no errors" 
 

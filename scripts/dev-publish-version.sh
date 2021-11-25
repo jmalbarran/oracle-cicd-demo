@@ -45,8 +45,8 @@ SET ECHO OFF
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
 -- Generate liquibase schema
 CD database/liquibase
-LB gencontrolfile
-LB genschema
+-- LB gencontrolfile
+LB genschema -label ${VERSION}
 quit
 EOF
 

@@ -10,6 +10,8 @@ source setenv.sh
 
 # Execute script
 echo "Initializing demo components: Creating database users/schemas"
+${CURDIR}/disconnect-sessions.sh ${DEV_USER}
+${CURDIR}/disconnect-sessions.sh ${PRE_USER}
 sql -S ${ADMIN_USER}/${ADMIN_PASSWORD}@${TNS_SERVICE} @create_users.sql $DEV_USER $DEV_PASSWORD $PRE_USER $PRE_PASSWORD
 
 # Create git environments
