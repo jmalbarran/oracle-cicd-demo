@@ -45,6 +45,13 @@ SET ECHO OFF
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
 -- Generate liquibase schema
 CD database/liquibase
+-- Disable physical DDL generation
+SET DDL TABLESPACE OFF
+SET DDL SEGMENT_ATTRIBUTES OFF
+SET DDL STORAGE OFF
+SET DDL SPECIFICATION OFF
+SET DDL PARTITIONING OFF
+-- Generate ChangeSet: Controlfile and Schema
 -- LB gencontrolfile
 LB genschema -label ${VERSION}
 quit
