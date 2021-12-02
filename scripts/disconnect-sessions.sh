@@ -21,8 +21,7 @@ fi
 
 
 # Start
-echo "==============================================" 
-echo "Disconnect session for user ${DB_USER}"  
+# echo "Disconnect sessions for user ${DB_USER}"  
 
 # Get last edition
 sql -S ${ADMIN_USER}/${ADMIN_PASSWORD}@${TNS_SERVICE} <<-EOF
@@ -42,7 +41,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('Killing user ${DB_USER} sessions');
 	FOR r IN (SELECT sid,serial# FROM v\$session where username = '${DB_USER}')
 	LOOP
-		DBMS_OUTPUT.PUT_LINE('Killing session ' || r.sid || ',' || r.serial#);
+		-- DBMS_OUTPUT.PUT_LINE('Killing session ' || r.sid || ',' || r.serial#);
 		EXECUTE IMMEDIATE 'alter system kill session ''' || r.sid || ',' || r.serial# || ''' IMMEDIATE';
 	END LOOP;	
 END;
@@ -50,7 +49,7 @@ END;
 QUIT
 EOF
 
-
-echo "Sessions disconnected"
+# End
+echo "Disconnected sessions for user ${DB_USER}"  
 
 

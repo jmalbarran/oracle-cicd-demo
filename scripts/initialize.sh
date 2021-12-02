@@ -16,7 +16,7 @@ sql -S ${ADMIN_USER}/${ADMIN_PASSWORD}@${TNS_SERVICE} @create_users.sql $DEV_USE
 
 # Create git environments
 echo "Initializing demo components: Creating environments origin (simulating remote origin), dev and pre"
-rm -rf ../environments
+rm -rf ../environments || echo >&2 "Error removing 'environments' folder" 
 mkdir -p ../environments
 
 

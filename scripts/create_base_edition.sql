@@ -12,6 +12,10 @@ SET ECHO OFF
 -- Exit on error
 WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK;
 
+-- Set edition for admin to base
+ALTER DATABASE DEFAULT EDITION = ORA$BASE;
+ALTER SESSION SET EDITION = ORA$BASE;
+
 -- Create base edition
 DECLARE 
     l_exists NUMBER;
